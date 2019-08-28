@@ -10,10 +10,16 @@ from numpy import zeros, ones, shape, random
 
 from scipy.sparse import csr_matrix as sparse
 
+from matplotlib import pyplot
 
 class StochasticPowerFlow():
     def __init__(self):
         self.name = "Stochastic Power Flow"
+        from pypower.ppoption import ppoption
+        opt = ppoption()
+        opt["VERBOSE"] = 0
+        opt["OUT_ALL"] = 0
+        self.opt = opt
 
     def monte_carlo_simulation(self, power_networks, ns = 100, beta = 0.05):
 
@@ -25,20 +31,22 @@ class StochasticPowerFlow():
         base_load_Q = mpc["bus"][:,QD]
 
         for i in range(ns):
-            load_variation = random.random(nb)
-            mpc["bus"][:,PD] = base_load_P*(0.5+load_variation*0.5)
-            mpc["bus"][:,QD] = base_load_Q*(0.5+load_variation*0.5)
+            load_variation = random.randn(nb)
+            mpc["bus"][:,PD] = base_load_P*(1+load_variation*0.5)
+            mpc["bus"][:,QD] = base_load_Q*(1+load_variation*0.5)
 
-            power_result_temp = runpf.runpf(mpc)
+            power_result_temp = runpf.runpf(mpc, ppopt=self.opt)
 
             result[i,:] = power_result_temp[0]["bus"][:,VM]
-
-
+        pyplot.hist(result)
+        pyplot.show()
 
         return result
 
 
 if __name__=="__main__":
+
+
     from pypower import case4gs
     mpc = case4gs.case4gs()
 
