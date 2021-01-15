@@ -1,2 +1,7 @@
-# ReliabilityAssessement
-Reliability assessement for energy systems using machine learning algorithms, including supervise learning and gan networks
+# Reliability Assessment
+Reliability assessment for hybrid AC/DC networks
+## 0. Introduction
+
+## 1. Modelling
+
+## 2. 
